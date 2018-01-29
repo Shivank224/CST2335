@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources><string name="hello_message">नमस्ते?</string>
     <string name="ButtonText">मैं एक बटन हूँં</string>
+    <string name="LoginText">लॉग इन</string>
+    <string name="LoginHint">ईमेल</string>
+    <string name="Password">पिन</string>
+    <string name="RadioButton">रेडियो बटन</string>
+    <string name="CheckBox">चेक बॉक्स</string>
+    <string name="Switch">यह क्या करता है?</string>
 </resources>

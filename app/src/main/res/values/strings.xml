@@ -2,5 +2,12 @@
     <string name="app_name">AndroidLabs</string>
     <string name="hello_message">Hello world!</string>
     <string name="ButtonText">I \'m a Button</string>
+    <string name="LoginText">Login</string>
+    <string name="LoginHint">Login Name</string>
+    <string name="Password">Password</string>
+    <string name="RadioButton">RadioButton</string>
+    <string name="CheckBox">CheckBox</string>
+    <string name="Switch">What does this do?</string>
+
 
 </resources>
