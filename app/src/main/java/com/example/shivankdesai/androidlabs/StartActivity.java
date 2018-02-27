@@ -13,12 +13,22 @@ public class StartActivity extends Activity {
 
     protected static final String ACTIVITY_NAME = "StartActivity";
     protected static final int REQUEST_CODE = 50;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         Button btn = (Button)findViewById(R.id.button);
         btn.setOnClickListener(e -> clickHandler());
+        Button btn1 = (Button)findViewById(R.id.button1);
+        btn1.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Log.i(ACTIVITY_NAME,"User clicked Start Chat");
+                startActivity(new Intent(StartActivity.this,ChatWindow.class));
+            }
+        });
     }
 
     @Override

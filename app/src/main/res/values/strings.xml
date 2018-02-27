@@ -8,6 +8,10 @@
     <string name="RadioButton">RadioButton</string>
     <string name="CheckBox">CheckBox</string>
     <string name="Switch">What does this do?</string>
-
-
+    <string name="dialog_message">Do you want to finish activity</string>
+    <string name="dialog_title">Title</string>
+    <string name="ok">Yes</string>
+    <string name="cancel">No</string>
+    <string name="StartChat">Start Chat</string>
+    <string name="sendButton">Send</string>
 </resources>

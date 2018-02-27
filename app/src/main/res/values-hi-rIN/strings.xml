@@ -7,4 +7,10 @@
     <string name="RadioButton">रेडियो बटन</string>
     <string name="CheckBox">चेक बॉक्स</string>
     <string name="Switch">यह क्या करता है?</string>
+    <string name= "dialog_message">क्या आप गतिविधि खत्म करना चाहते हैं?</string>
+    <string name= "dialog_title">शीर्षक</string>
+    <string name="ok">हाँ</string>
+    <string name="cancel">नहीं</string>
+    <string name="StartChat">बातचीत शुरू कीजिए</string>
+    <string name="sendButton">भेजना</string>
 </resources>
