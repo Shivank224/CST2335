@@ -2,7 +2,6 @@ package com.example.shivankdesai.androidlabs;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +26,15 @@ public class StartActivity extends Activity {
             public void onClick(View view) {
                 Log.i(ACTIVITY_NAME,"User clicked Start Chat");
                 startActivity(new Intent(StartActivity.this,ChatWindow.class));
+            }
+        });
+        Button btn2 = (Button)findViewById(R.id.button2);
+        btn2.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Log.i(ACTIVITY_NAME,"User clicked Forecast");
+                startActivity(new Intent(StartActivity.this,WeatherForecast.class));
             }
         });
     }

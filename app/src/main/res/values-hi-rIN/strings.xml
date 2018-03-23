@@ -13,4 +13,5 @@
     <string name="cancel">नहीं</string>
     <string name="StartChat">बातचीत शुरू कीजिए</string>
     <string name="sendButton">भेजना</string>
+    <string name="WeatherForecast">पूर्वानुमान</string>
 </resources>
