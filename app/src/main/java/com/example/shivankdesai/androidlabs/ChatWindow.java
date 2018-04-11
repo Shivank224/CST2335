@@ -1,24 +1,30 @@
 package com.example.shivankdesai.androidlabs;
 
 import android.app.Activity;
-import android.app.LauncherActivity;
+
+
+import android.app.FragmentTransaction;
+
 import android.content.ContentValues;
 import android.content.Context;
+
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.BundleCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -28,23 +34,54 @@ public class ChatWindow extends Activity {
     private EditText editText;
     private Button button;
     public static final String ACTIVITY_NAME ="ChatWindow";
-    final ArrayList<String> arrayList = new ArrayList<>();
-    public ChatDatabaseHelper obj;
-    public SQLiteDatabase dataBase;
-
+    final static ArrayList<String> arrayList = new ArrayList<>();
+    public static ChatDatabaseHelper obj;
+    public static SQLiteDatabase dataBase;
+    public static Cursor cursor;
+    public boolean frameExist ;
+    private static ChatAdapter chatAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_window);
-
-        listView= findViewById(R.id.ListView);
-        editText= findViewById(R.id.ChatText);
-        button= findViewById(R.id.sendChat);
-
+        chatAdapter = new ChatAdapter(this);
+        FrameLayout frame = findViewById(R.id.frameLayout);
+        frameExist= (frame!=null);
         obj = new ChatDatabaseHelper(this);
         dataBase = obj.getWritableDatabase();
 
-       Cursor cursor = dataBase.rawQuery("select * from "+obj.TABLE_NAME,null);
+        listView= findViewById(R.id.ListView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Bundle shareData = new Bundle();
+                shareData.putString("Message",arrayList.get(i));
+                shareData.putInt("Position",i);
+                shareData.putLong("DatabaseId",l);
+                shareData.putBoolean("FrameExit",frameExist);
+                if(frameExist){
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    MessageFragment mf= new MessageFragment();
+                    mf.setArguments(shareData);
+                    ft.replace(R.id.frameLayout,mf);
+                    ft.commit();
+                }else{
+                    Intent intent = new Intent(getApplicationContext(),MessageDetails.class);
+                    intent.putExtra("Message",arrayList.get(i));
+                    intent.putExtra("Position",i);
+                    intent.putExtra("DatabaseId",l);
+                    intent.putExtra("FrameExit",frameExist);
+                    startActivityForResult(intent,1);
+                }
+            }
+        });
+        editText= findViewById(R.id.ChatText);
+        button= findViewById(R.id.sendChat);
+
+
+
+        cursor = dataBase.rawQuery("select * from "+obj.TABLE_NAME,null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast() ) {
             Log.i(ACTIVITY_NAME, "SQL MESSAGE:"
@@ -54,7 +91,7 @@ public class ChatWindow extends Activity {
             cursor.moveToNext();
         }
         Log.i(ACTIVITY_NAME, "Cursor’s  column count =" + cursor.getColumnCount() );
-        final ChatAdapter chatAdapter = new ChatAdapter(this);
+
         listView.setAdapter(chatAdapter);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +104,27 @@ public class ChatWindow extends Activity {
                 editText.setText("");
             }
         });
-    }
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == 10){
+            Bundle bundle= data.getExtras();
+            int id = bundle.getInt("Position");
+            long dataId = bundle.getLong("DatabaseId");
+
+            Log.i("DtaId",id+"");
+            //long dataId=  chatAdapter.getItemId(id);
+
+            dataBase.delete(ChatDatabaseHelper.TABLE_NAME, ChatDatabaseHelper.KEY_ID+"="+dataId, null);
+
+            arrayList.remove(id);
+            chatAdapter.notifyDataSetChanged();
+            Toast.makeText(getApplicationContext(),"Message has been deleted",Toast.LENGTH_SHORT).show();
+        }
+    }
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -108,5 +164,51 @@ public class ChatAdapter extends ArrayAdapter<String>{
         message.setText(getItem(position));
         return result;
     }
+
+    @Override
+    public long getItemId(int position) {
+        cursor = dataBase.rawQuery("select * from "+obj.TABLE_NAME,null);
+        cursor.moveToPosition(position);
+        Long id = cursor.getLong(cursor.getColumnIndex(ChatDatabaseHelper.KEY_ID));
+
+        return id;
+
+    }
+
 }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        arrayList.clear();
+        cursor = dataBase.rawQuery("select * from "+obj.TABLE_NAME,null);
+        cursor.moveToFirst();
+
+        while(!cursor.isAfterLast() ) {
+            Log.i(ACTIVITY_NAME, "SQL MESSAGE:"
+                    +cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE)) );
+            Log.i(ACTIVITY_NAME,"COLUMN NAME: "+ cursor.getColumnName(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE)));
+            arrayList.add(cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE))); //add the item
+            cursor.moveToNext();
+        }
+        chatAdapter.notifyDataSetChanged();
+    }
+
+    public static void delete(int id){
+        dataBase.delete(ChatDatabaseHelper.TABLE_NAME, ChatDatabaseHelper.KEY_ID+"="+id, null);
+
+        cursor = dataBase.rawQuery("select * from "+obj.TABLE_NAME,null);
+        cursor.moveToFirst();
+        arrayList.clear();
+        while(!cursor.isAfterLast() ) {
+            Log.i(ACTIVITY_NAME, "SQL MESSAGE:"
+                    +cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE)) );
+            Log.i(ACTIVITY_NAME,"COLUMN NAME: "+ cursor.getColumnName(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE)));
+            arrayList.add(cursor.getString(cursor.getColumnIndex(ChatDatabaseHelper.KEY_MESSAGE))); //add the item
+            cursor.moveToNext();
+        }
+        chatAdapter.notifyDataSetChanged();
+
+        
+    }
 }
