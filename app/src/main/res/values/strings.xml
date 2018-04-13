@@ -15,4 +15,9 @@
     <string name="StartChat">Start Chat</string>
     <string name="sendButton">Send</string>
     <string name="WeatherForecast">Forecast</string>
+    <string name="messageHint">Message Here</string>
+    <string name="idHint">ID=</string>
+    <string name="deleteBtn">Delete this message</string>
+    <string name="title_activity_test_toolbar">TestToolbar</string>
+    <string name="add">Add</string>
 </resources>
